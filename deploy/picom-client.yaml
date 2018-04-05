@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: picom-client
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+       k8s-app: picom-client
+    spec:
+      containers:
+      - name: picom-client
+        image: picoreti/picom:1
+        command: ["/client.bin"]
+        args: ["-u", "amqp://$(RABBITMQ_SERVICE_HOST):$(RABBITMQ_SERVICE_PORT_AMQP)"]
+        imagePullPolicy: Always

@@ -1,0 +1,86 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  - services
+  - endpoints
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+- kind: ServiceAccount
+  name: prometheus
+  namespace: default
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: picom-prometheus
+  labels:
+    app: picom-prometheus
+    prometheus: picom-prometheus
+spec:
+  replicas: 1
+  baseImage: luxas/prometheus
+  version: v2.0.0-rc.0
+  serviceAccountName: prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      app: picom-monitor
+  resources:
+    requests:
+      memory: 300Mi
+  retention: 7d
+#  storage:
+#    volumeClaimTemplate:
+#      spec:
+#        storageClassName: rook-block
+#        resources:
+#          requests:
+#            storage: 3Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: picom-prometheus
+  labels:
+    app: picom-prometheus
+    prometheus: picom-prometheus
+spec:
+  type: NodePort
+  ports:
+  - name: web
+    nodePort: 31000
+    port: 9090
+    targetPort: web
+  selector:
+    prometheus: picom-prometheus
