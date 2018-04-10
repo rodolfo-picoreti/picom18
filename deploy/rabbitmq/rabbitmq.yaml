@@ -15,14 +15,14 @@ spec:
         ports:
         - name: amqp
           containerPort: 5672
-	- name: managment
+        - name: managment
           containerPort: 15672
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 3
-            periodSeconds: 30 
+        readinessProbe:
+          httpGet:
+            path: /
+            port: managment
+          initialDelaySeconds: 3
+          periodSeconds: 30 
 
 ---
 apiVersion: v1

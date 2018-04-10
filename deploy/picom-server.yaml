@@ -61,22 +61,21 @@ spec:
   endpoints:
   - port: web
 
-#---
-#
-#kind: HorizontalPodAutoscaler
-#apiVersion: autoscaling/v2beta1
-#metadata:
-#  name: picom-server-hpa 
-#spec:
-#  scaleTargetRef:
-#    apiVersion: apps/v1beta2
-#    kind: Deployment
-#    name: picom-server 
-#  minReplicas: 1
-#  maxReplicas: 10
-#  metrics:
-#  - type: Pods
-#    pods:
-#      metricName: human_detected 
-#      targetAverageValue: 2.5 
-#
+---
+
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta1
+metadata:
+  name: picom-server-hpa 
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1beta2
+    kind: Deployment
+    name: picom-server 
+  minReplicas: 1
+  maxReplicas: 4 
+  metrics:
+  - type: Pods
+    pods:
+      metricName: specific_metric 
+      targetAverageValue: 0.1 
