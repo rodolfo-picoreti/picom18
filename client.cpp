@@ -7,7 +7,7 @@
 int main(int argc, char** argv) {
   std::string uri;
   std::vector<int> rates;
-  int n_req, rate_duration_s, packet_size;
+  int rate_duration_s, packet_size;
 
   is::po::options_description opts("Options");
   auto opt_add = opts.add_options();
@@ -15,7 +15,6 @@ int main(int argc, char** argv) {
           "amqp broker uri");
   opt_add("hz,f", is::po::value<std::vector<int>>(&rates)->multitoken()->required(),
           "list of requests frequency");
-  opt_add("n_req,n", is::po::value<int>(&n_req)->default_value(4), "number of requests per period");
   opt_add("duration,d", is::po::value<int>(&rate_duration_s)->default_value(120),
           "duration of each rate in seconds");
   opt_add("packet_size,p", is::po::value<int>(&packet_size)->default_value(1 * 1024 * 1024),
@@ -43,10 +42,7 @@ int main(int argc, char** argv) {
       for (int n = 0; n < rate_duration_s * rate; ++n) {
         deadline += period;
         is::set_deadline(message, deadline);
-
-        // Simulate n_req publishers
-        for (int i = 0; i < n_req; ++i)
-          is::publish(channel, "MyService.ProcImage", message);
+        is::publish(channel, "MyService.ProcImage", message);
 
         auto delta_ns = is::pb::TimeUtil::DurationToNanoseconds(deadline - is::current_time());
         std::this_thread::sleep_for(std::chrono::nanoseconds(delta_ns));

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: picom-client
 spec:
-  replicas: 1
+  replicas: 4
   template:
     metadata:
       labels:
@@ -13,5 +13,12 @@ spec:
       - name: picom-client
         image: picoreti/picom:1
         command: ["/client.bin"]
-        args: ["-u", "amqp://$(RABBITMQ_SERVICE_HOST):$(RABBITMQ_SERVICE_PORT_AMQP)"]
+        args: 
+        - --uri=amqp://$(RABBITMQ_SERVICE_HOST):$(RABBITMQ_SERVICE_PORT_AMQP)
+        # frequency of requests
+        - --hz=20
+        # payload size in bytes
+        - --packet_size=1
+        # in seconds 
+        - --duration=180
         imagePullPolicy: Always

@@ -18,7 +18,14 @@ spec:
       - name: picom-server
         image: "picoreti/picom:1"
         command: ["/server.bin"]
-        args: ["-u", "amqp://$(RABBITMQ_SERVICE_HOST):$(RABBITMQ_SERVICE_PORT_AMQP)"]
+        args:
+        - --uri=amqp://$(RABBITMQ_SERVICE_HOST):$(RABBITMQ_SERVICE_PORT_AMQP)
+        # lowest service latency in ms
+        - --low=20
+        # highest service latency in ms
+        - --high=40
+        # service cpu boundedness [0.0,1.0]
+        - --cpu=0.80
         imagePullPolicy: Always
         ports:
         - name: web
@@ -60,6 +67,7 @@ spec:
       app: picom-server
   endpoints:
   - port: web
+    interval: 15s # scrape the endpoint every X seconds
 
 ---
 

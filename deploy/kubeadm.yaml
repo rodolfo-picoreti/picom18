@@ -4,7 +4,7 @@ controllerManagerExtraArgs:
   horizontal-pod-autoscaler-use-rest-clients: "true"
   horizontal-pod-autoscaler-sync-period: "10s"
   node-monitor-grace-period: "10s"
-  horizontal-pod-autoscaler-downscale-delay: "30s"
+  horizontal-pod-autoscaler-downscale-delay: "15s"
   horizontal-pod-autoscaler-upscale-delay: "15s"
 apiServerExtraArgs:
   runtime-config: "api/all=true"

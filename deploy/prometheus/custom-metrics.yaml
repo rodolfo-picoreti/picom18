@@ -118,8 +118,13 @@ spec:
       - name: custom-metrics-server
         image: luxas/k8s-prometheus-adapter:v0.2.0-beta.0
         args:
+        # This is the URL used to connect to Prometheus. It will eventually contain
+        # query parameters to configure the connection.
         - --prometheus-url=http://picom-prometheus.default.svc:9090
+        # This is the interval at which to update the cache of available metrics from Prometheus.
         - --metrics-relist-interval=30s
+        # This is the duration used when requesting rate metrics from Prometheus. 
+        # It must be larger than your Prometheus collection interval.
         - --rate-interval=60s
         - --v=10
         - --logtostderr=true

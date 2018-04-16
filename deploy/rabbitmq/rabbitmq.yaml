@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: rabbitmq
-        image: viros/is-rabbitmq:3
+        image: rabbitmq:3-management
         ports:
         - name: amqp
           containerPort: 5672
