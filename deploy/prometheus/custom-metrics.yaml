@@ -122,7 +122,7 @@ spec:
         # query parameters to configure the connection.
         - --prometheus-url=http://picom-prometheus.default.svc:9090
         # This is the interval at which to update the cache of available metrics from Prometheus.
-        - --metrics-relist-interval=30s
+        - --metrics-relist-interval=60s
         # This is the duration used when requesting rate metrics from Prometheus. 
         # It must be larger than your Prometheus collection interval.
         - --rate-interval=60s

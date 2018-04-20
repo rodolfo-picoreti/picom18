@@ -4,8 +4,12 @@ controllerManagerExtraArgs:
   horizontal-pod-autoscaler-use-rest-clients: "true"
   horizontal-pod-autoscaler-sync-period: "10s"
   node-monitor-grace-period: "10s"
-  horizontal-pod-autoscaler-downscale-delay: "15s"
-  horizontal-pod-autoscaler-upscale-delay: "15s"
+  horizontal-pod-autoscaler-downscale-delay: "60s"
+  horizontal-pod-autoscaler-upscale-delay: "60s"
 apiServerExtraArgs:
   runtime-config: "api/all=true"
 kubernetesVersion: "stable-1.9"
+#networking:
+#  dnsDomain: cluster.local
+#  podSubnet: 192.168.0.0/16
+#  serviceSubnet: 10.96.0.0/12

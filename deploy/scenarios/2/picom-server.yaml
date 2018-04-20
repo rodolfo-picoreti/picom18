@@ -1,0 +1,89 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  labels:
+    app: picom-server
+  name: picom-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: picom-server
+  template:
+    metadata:
+      labels:
+        app: picom-server
+    spec:
+      containers:
+      - name: picom-server
+        image: "picoreti/picom:1"
+        command: ["/server.bin"]
+        args:
+        - --uri=amqp://$(RABBITMQ_SERVICE_HOST):$(RABBITMQ_SERVICE_PORT_AMQP)
+        # lowest service latency in ms
+        - --low=20
+        # highest service latency in ms
+        - --high=40
+        # service cpu boundedness [0.0,1.0]
+        - --cpu=0.80
+        imagePullPolicy: Always
+        ports:
+        - name: web
+          containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 30
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: picom-server
+  labels:
+    app: picom-server
+spec:
+  ports:
+  - name: web
+    port: 80
+    targetPort: web
+  selector:
+    app: picom-server
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: picom-monitor
+  labels:
+    app: picom-monitor
+spec:
+  selector:
+    matchLabels:
+      app: picom-server
+  endpoints:
+  - port: web
+    interval: 15s # scrape the endpoint every X seconds
+
+---
+
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta1
+metadata:
+  name: picom-server-hpa 
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1beta2
+    kind: Deployment
+    name: picom-server 
+  minReplicas: 1
+  maxReplicas: 4 
+  metrics:
+  - type: Pods
+    pods:
+      metricName: code_deadline_exceeded 
+      targetAverageValue: 5 

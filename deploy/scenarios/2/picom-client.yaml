@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: picom-client
 spec:
-  replicas: 4
+  replicas: 2
   template:
     metadata:
       labels:
@@ -16,9 +16,11 @@ spec:
         args: 
         - --uri=amqp://$(RABBITMQ_SERVICE_HOST):$(RABBITMQ_SERVICE_PORT_AMQP)
         # frequency of requests
+        - --hz=10
+        - --hz=20
         - --hz=20
         # payload size in bytes
         - --packet_size=81920
-        # in seconds 
-        - --duration=240
+        # period publishing each frequency [in seconds]
+        - --duration=300
         imagePullPolicy: Always

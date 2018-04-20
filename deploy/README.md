@@ -43,7 +43,7 @@ Deploy the metrics server
  kubectl apply -f metrics-server
 ```
 
-Deploy the prometheus operator and wait until it is healthy:
+Deploy the prometheus operator and wait until it is ready:
 ```shell
  kubectl apply -f prometheus/prometheus-operator.yaml
  while [[ $(kubectl get prometheus; echo $?) == 1 ]]; do sleep 1; done
@@ -55,12 +55,6 @@ Deploy a prometheus instance and a custom metric server to connect our prometheu
  kubectl apply -f prometheus/prometheus-instance.yaml
 ```
 
-Now everything is ready to deploy our service and the client:
-```shell
- kubectl apply -f picom-server.yaml
- kubectl apply -f picom-client.yaml
-```
-
 Add the data sources to grafana by running:
 ```shell
  grafana=(`kubectl get svc --all-namespaces | grep -i monitoring-grafana`); grafana="${grafana[3]}"
@@ -68,4 +62,22 @@ Add the data sources to grafana by running:
  curl -H "Content-Type: application/json" -X POST -d '{ "name": "infra", "type": "influxdb", "url": "http://monitoring-influxdb.kube-system.svc:8086",  "access":"proxy", "database": "k8s" }' http://$grafana/api/datasources
 
  curl -H "Content-Type: application/json" -X POST -d '{ "name": "prometheus", "type": "prometheus", "url": "http://picom-prometheus.default.svc:9090",  "access":"proxy"}' http://$grafana/api/datasources
+```
+
+Now everything is ready to deploy our services. To deploy an experiment run:
+```shell
+ # where $N is the experiment id
+ kubectl apply -f scenarios/$N
+```
+
+To visualize the experiment data just import the respective dashboard available on the dashboards directory.
+
+To cleanup run:
+```shell
+ kubectl delete -f scenarios/$N
+```
+
+To cleanup everything:
+```shell
+ sudo kubeadm reset
 ```
