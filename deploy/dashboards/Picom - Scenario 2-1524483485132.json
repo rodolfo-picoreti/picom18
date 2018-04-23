@@ -271,7 +271,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "count(code_ok_total)",
+          "expr": "count(ok_total{exported_service=\"MyService.ProcImage\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "",
@@ -351,7 +351,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(rpc_duration_ms_count{exported_service=\"MyService.ProcImage\"}[30s])",
+          "expr": "sum(rate(requests_total{exported_service=\"MyService.ProcImage\"}[1m]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -368,7 +368,7 @@
             }
           ],
           "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "req/s",
           "measurement": "network/tx_rate",
           "orderByTime": "ASC",
           "policy": "default",
@@ -401,6 +401,13 @@
               "value": "pod"
             }
           ]
+        },
+        {
+          "expr": "avg(rate(duration_total{exported_service=\"MyService.ProcImage\"}[1m])/rate(requests_total{exported_service=\"MyService.ProcImage\"}[1m]))",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "duration/s",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -476,14 +483,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(rate(code_ok_total[30s]))",
+          "expr": "sum(rate(ok_total{exported_service=\"MyService.ProcImage\"}[30s]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "OK/s",
           "refId": "A"
         },
         {
-          "expr": "sum(rate(code_deadline_exceeded_total[30s]))",
+          "expr": "sum(rate(de_total{exported_service=\"MyService.ProcImage\"}[30s]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "DE/s",
@@ -528,7 +535,7 @@
       ]
     }
   ],
-  "refresh": "10s",
+  "refresh": "1m",
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
@@ -536,7 +543,7 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
@@ -567,5 +574,5 @@
   "timezone": "",
   "title": "Picom - Scenario 2",
   "uid": "T-gdWxZik",
-  "version": 4
+  "version": 2
 }

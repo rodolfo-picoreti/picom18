@@ -25,7 +25,7 @@ spec:
         # highest service latency in ms
         - --high=40
         # service cpu boundedness [0.0,1.0]
-        - --cpu=0.80
+        - --cpu=0.90
         imagePullPolicy: Always
         ports:
         - name: web
@@ -81,7 +81,7 @@ spec:
     kind: Deployment
     name: picom-server 
   minReplicas: 1
-  maxReplicas: 4 
+  maxReplicas: 3 
   metrics:
   - type: Pods
     pods:

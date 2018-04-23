@@ -25,7 +25,7 @@ spec:
         # highest service latency in ms
         - --high=40
         # service cpu boundedness [0.0,1.0]
-        - --cpu=0.80
+        - --cpu=0.90
         imagePullPolicy: Always
         ports:
         - name: web
@@ -36,7 +36,9 @@ spec:
             port: 8080
           initialDelaySeconds: 5
           periodSeconds: 30
-
+        resources:
+          requests:
+            cpu: "1000m"
 ---
 
 apiVersion: v1
@@ -83,7 +85,12 @@ spec:
   minReplicas: 1
   maxReplicas: 4 
   metrics:
-  - type: Pods
-    pods:
-      metricName: code_deadline_exceeded 
-      targetAverageValue: 5 
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 75
+#      targetAverageUtilization: 55
+#  - type: Pods
+#    pods:
+#      metricName: requests 
+#      targetAverageValue: 27
